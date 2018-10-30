@@ -29,7 +29,6 @@ class VGG:
     def initialize_vgg_model(self, input_shape):
             input = Input(shape=input_shape)
 
-
             x = self.conv_vgg(input, 64)
             x = self.conv_vgg(x, 128)
             x = self.conv_vgg(x, 256)
@@ -48,7 +47,8 @@ class VGG:
     def train(self, train_X, train_y, test_X, test_y):
         callbacks = [EarlyStopping(monitor='val_loss', patience=2),
                      TensorBoard(log_dir='logs/{}'.format(self.model_name), batch_size=self.batch_size, write_images=True),
-                     ModelCheckpoint(filepath=self.model_name + '.h5', save_best_only=True)]
+                     ModelCheckpoint(filepath='models/' + self.model_name + '.h5', save_best_only=True)]
+
         self.model.fit(train_X,
                        train_y,
                        batch_size=self.batch_size,
@@ -57,5 +57,5 @@ class VGG:
                        callbacks=callbacks,
                        validation_data=(test_X, test_y))
 
-    def predict(self, test_X):
-        return self.model.predict(test_X)
+    def predict(self, X):
+        return self.model.predict(X)
