@@ -1,10 +1,11 @@
 import musdb
+import dsdtools
 import numpy as np
 from argparse import ArgumentParser
 from sklearn.model_selection import train_test_split
 from helpers import get_filter_bank
 
-SAMPLE_LENGTH = 44000
+SAMPLE_LENGTH = 44100
 
 def process_tracks(data):
     test = data[0].targets['bass'].audio
@@ -39,11 +40,17 @@ def process_tracks(data):
 if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('-f', dest='PATH')
+    parser.add_argument('-d', dest='DATASET')
     args = parser.parse_args()
 
-    mus = musdb.DB(root_dir=args.PATH)
-    train = mus.load_mus_tracks(subsets=['train'])
-    test = mus.load_mus_tracks(subsets=['test'])
+    if args.DATASET == 'mus':
+        mus = musdb.DB(root_dir=args.PATH)
+        train = mus.load_mus_tracks(subsets=['train'])
+        test = mus.load_mus_tracks(subsets=['test'])
+    elif args.DATASET == 'dsd':
+        dsd = dsdtools.DB(root_dir='path/to/dsdtools')
+        for i in dsd:
+            print(i)
 
     print("Processing training data")
     X, y = process_tracks(train)
