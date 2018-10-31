@@ -4,7 +4,7 @@ from argparse import ArgumentParser
 from sklearn.model_selection import train_test_split
 from helpers import get_filter_bank
 
-SAMPLE_LENGTH = 44100
+SAMPLE_LENGTH = 44000
 
 def process_tracks(data):
     test = data[0].targets['bass'].audio
@@ -15,7 +15,8 @@ def process_tracks(data):
         instruments = track.targets
         for instrument in instruments.keys():
             audio = instruments[instrument].audio
-            for i in range(0, audio.shape[0], SAMPLE_LENGTH):
+            i = 0
+            while i + SAMPLE_LENGTH < audio.shape[0]:
                 sample = audio[i:i + SAMPLE_LENGTH, 0] #TODO: find out if both channels needed
                 banks = get_filter_bank(sample)
                 banks = banks.reshape(banks.shape[0], banks.shape[1], 1)
@@ -28,6 +29,9 @@ def process_tracks(data):
                 elif instrument == 'bass':
                     X.append(banks)
                     y.append(2)
+
+                i += SAMPLE_LENGTH
+
     X = np.array(X)
     y = np.array(y)
     return X, y
@@ -46,7 +50,7 @@ if __name__ == '__main__':
     train_X, val_X, train_y, val_y = train_test_split(X, y, test_size=.2, random_state=6)
     train_X = np.array(train_X)
     val_X = np.array(val_X)
-    
+
     np.save('data/train_X.npy', train_X)
     np.save('data/train_y.npy', train_y)
     np.save('data/val_X.npy', val_X)

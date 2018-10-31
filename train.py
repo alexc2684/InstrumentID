@@ -19,8 +19,7 @@ if __name__ == '__main__':
     test_y = np.load('data/test_y.npy')
 
     INPUT_SHAPE = train_X[0].shape
-    print(train_X)
-    print(val_X.shape)
+
     model = VGG(INPUT_SHAPE,
                 args.epochs,
                 args.batch_size,
